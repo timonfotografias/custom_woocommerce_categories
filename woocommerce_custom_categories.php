@@ -62,7 +62,7 @@ vc_map( array(
             "heading" => __("Plantilla para las tarjetas", "mi-text-domain"),
             "param_name" => "plantilla-html",
             "value" => '',
-            "description" => __("Escriba en html la forma en que se mostrarán los datos, puede incluir <b>[category]</b> para mostrar el nombre de la categoría, <b>[link]</b> para definir el enlace a la categoría, <b>[image]</b> para mostrar la miniatura de la categoría y <b>[quantity]</b> para mostrar la cantidad de elementos de la categoría,.", "mi-text-domain")
+            "description" => __("Escriba en html la forma en que se mostrarán los datos, puede incluir <b>-category-</b> para mostrar el nombre de la categoría, <b>-link-</b> para definir el enlace a la categoría, <b>-image-</b> para mostrar la miniatura de la categoría y <b>-quantity-</b> para mostrar la cantidad de elementos de la categoría,.", "mi-text-domain")
          ),
         array(
             "type" => "param_group",
@@ -92,33 +92,30 @@ function render_categ_custom_rar($atts) {
         array( 
             'columns' => '100%', 
             'ancho-minimo' => '', 
-            'plantilla-html' => 'sssss'
+            'plantilla-html' => ''
         ), $atts 
     );
-    
-    // Extrae los atributos del shortcode
-    extract( shortcode_atts( array(
-        'elementos' => '',
-    ), $atts ) );
 
-    // Decodifica los elementos
-    $elementos = vc_param_group_parse_atts( $elementos );
+    $categorias = get_terms( 'product_cat', array(
+        'hide_empty' => false
+    ) );
 
     // Inicia la salida
     $output = '<div style="display:flex;flex-wrap:wrap;justify-content:space-around;">';
 
     // Itera sobre cada elemento
-    foreach ( $elementos as $elemento ) {
+    foreach ( $categorias as $categoria ) {
 
         
         $plantilla = $parametros['plantilla-html'];
-        $plantilla = str_replace("-hola-", esc_html($elemento['titulo']), $plantilla);
+        $plantilla = str_replace("-category-", esc_html( $categoria->name ), $plantilla);
 
         // Añade cada elemento a la salida
 
         $output .= '<div style="padding:10px;width:'.esc_html($parametros['columns']).';">';
 
         $output .= $plantilla;
+        //$output .= esc_html( $categoria->name );
 
         $output .= '</div>';
     }
