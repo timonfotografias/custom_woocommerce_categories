@@ -25,6 +25,46 @@ vc_map( array(
     "category" => "Rubén Alvarado", 
     "params" => array( 
         array(
+            "type" => "dropdown",
+            "holder" => "div",
+            "class" => "",
+            "heading" => __("Columnas", "mi-text-domain"),
+            "param_name" => "columns",
+            "value" => array(
+               '1 columna' => '100%',
+               '2 columnas' => '50%',
+               '3 Columnas' => '33%',
+               '4 columna' => '25%',
+               '5 columnas' => '20%',
+               '6 Columnas' => '16%',
+               '7 columna' => '14%',
+               '8 columnas' => '12%',
+               '9 Columnas' => '11%',
+               '10 columna' => '10%',
+               '11 columnas' => '9%',
+               '12 Columnas' => '8%'
+            ),
+            "description" => __("Selecciona en cuántas columnas se van a distribuir las categorías.", "mi-text-domain")
+        ),
+        array(
+            "type" => "textfield",
+            "holder" => "div",
+            "class" => "",
+            "heading" => __("Ancho mínimo", "mi-text-domain"),
+            "param_name" => "ancho-minimo",
+            "value" => '',
+            "description" => __("Intrtoduzca el ancho mínimo incluyendo la medida. (Ej. 23px, 12rem, 13em...)", "mi-text-domain")
+        ),
+         array(
+            "type" => "textarea_html",
+            "holder" => "div",
+            "class" => "",
+            "heading" => __("Plantilla para las tarjetas", "mi-text-domain"),
+            "param_name" => "plantilla-html",
+            "value" => '',
+            "description" => __("Escriba en html la forma en que se mostrarán los datos, puede incluir <b>[category]</b> para mostrar el nombre de la categoría, <b>[link]</b> para definir el enlace a la categoría, <b>[image]</b> para mostrar la miniatura de la categoría y <b>[quantity]</b> para mostrar la cantidad de elementos de la categoría,.", "mi-text-domain")
+         ),
+        array(
             "type" => "param_group",
             "value" => "",
             "param_name" => "elementos",
@@ -47,6 +87,15 @@ vc_map( array(
  ) );
 
 function render_categ_custom_rar($atts) { 
+    
+    $parametros = shortcode_atts( 
+        array( 
+            'columns' => '100%', 
+            'ancho-minimo' => '', 
+            'plantilla-html' => 'sssss'
+        ), $atts 
+    );
+    
     // Extrae los atributos del shortcode
     extract( shortcode_atts( array(
         'elementos' => '',
@@ -60,20 +109,18 @@ function render_categ_custom_rar($atts) {
 
     // Itera sobre cada elemento
     foreach ( $elementos as $elemento ) {
+
+        
+        $plantilla = $parametros['plantilla-html'];
+        $plantilla = str_replace("-hola-", esc_html($elemento['titulo']), $plantilla);
+
         // Añade cada elemento a la salida
-        $output .= '<div class="vc_col-sm-6" style="padding:10px;width:33%;">
-        <a href="https://google.es" target="_blank" style="display:flex;
-        border-radius:10px;padding:30px;box-shadow:1px 1px 5px 0
-        rgba(145,145,145,0.32)!important;align-items:center;">
-        
-        <img
-        src="'.plugins_url('src/test_pic.png', __FILE__).'"
-        style="display:inline; height:80px; width:auto;"/>
-        
-        <h4 style="display:inline;margin-left:20px;padding:0;">Nombre de la entrada</h4>
-        
-        </a>
-        </div>';
+
+        $output .= '<div style="padding:10px;width:'.esc_html($parametros['columns']).';">';
+
+        $output .= $plantilla;
+
+        $output .= '</div>';
     }
 
     // Finaliza la salida
